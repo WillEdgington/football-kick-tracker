@@ -1,0 +1,56 @@
+# Football Kick Tracker
+
+A computer vision pipeline for detecting and tracking kicks performed by football players. Built as a non-invasive, automated alternative for logging kick frequency in training sessions.
+
+---
+
+## Project Phases
+
+### Phase 1 - Single-Camera Kick Detector
+2D pose estimation and rule-based kick detection on single-camera footage. Single ball, single player kick count.
+
+### Phase 2 - Multi-Camera Kick Detector
+Extend to 3D pose estimation across multiple cameras. Rule-based kick detection with duplicate kick removal across views.
+
+### Phase 3 - Multiple Ball Detection
+Handle real training session conditions with multiple balls in frame simultaneously.
+
+### Phase 4 - Dataset Construction
+Use the rule-based pipeline to generate candidate kick events from footage. Manually verify and label events to build a ground-truth dataset for model training.
+
+### Phase 5 - Player Assignment
+Assign detected kicks to individual players using IMU wearable data and/or computer vision methods.
+
+### Phase 6 - Session Output
+Attribute kicks to players and produce a per-session kick frequency table.
+
+### Phase 7 - Train / Fine-Tune Pipeline
+Use the labelled dataset to train a lightweight neural network for kick detection, replacing or supplementing the rule-based approach.
+
+### Phase 8 - Real-Time Tracker
+Extend the pipeline to support real-time kick detection and live session feedback.
+
+### Phase 9 - Extended Metrics
+Track additional metrics such as kick velocity and intensity classification (soft / medium / hard) to build a richer picture of training load and player output.
+
+---
+
+## Project Status
+
+This section serves as a living development log.
+
+### Current Focus
+- **Phase 1 - Single-camera kick detector:** getting a working proof of concept for kick detection
+
+### Recently Completed
+*Nothing yet.*
+
+---
+
+## Author
+
+Created by [**WillEdgington**](https://github.com/WillEdgington)
+
+📧 [willedge037@gmail.com](mailto:willedge037@gmail.com)
+
+🔗 [LinkedIn](https://www.linkedin.com/in/williamedgington/)
