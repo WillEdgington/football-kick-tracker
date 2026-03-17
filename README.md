@@ -54,3 +54,7 @@ Created by [**WillEdgington**](https://github.com/WillEdgington)
 📧 [willedge037@gmail.com](mailto:willedge037@gmail.com)
 
 🔗 [LinkedIn](https://www.linkedin.com/in/williamedgington/)
+
+## License
+
+This project is licensed under the [GPL-3.0 License](LICENSE).
