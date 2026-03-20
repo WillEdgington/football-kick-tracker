@@ -40,10 +40,13 @@ Track additional metrics such as kick velocity and intensity classification (sof
 This section serves as a living development log.
 
 ### Current Focus
-- **Phase 1 - Single-camera kick detector:** getting a working proof of concept for kick detection
+- **Phase 1 - Single-camera kick detector:** YOLO candidate model evaluation across multiple training drill clips
 
 ### Recently Completed
-*Nothing yet.*
+<!-- Latest first. Maximum 10 items. Older entries belong in the git log. -->
+- `pose/visualise.py` - `drawKeypoints` with full test coverage
+- Initial two-model comparison (YOLO11m vs YOLO26m) - see `notebooks/01_2D_pose_model_comparison.ipynb`
+- Repo scaffolding - pre-commit hooks, commitizen, pytest, ruff, black
 
 ---
 
