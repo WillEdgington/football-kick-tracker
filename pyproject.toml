@@ -12,6 +12,7 @@ dependencies = [
     "opencv-python",
     "numpy",
     "matplotlib",
+    "pandas",
 ]
 
 [tool.setuptools.packages.find]
