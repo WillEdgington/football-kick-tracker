@@ -16,6 +16,22 @@ def drawKeypoints(
     colours: Dict[str, Tuple[int, int, int]] = LOWERCOLOURS,
     confThreshold: float = CONFTHRESHOLD,
 ) -> np.ndarray:
+    """
+    Draw keypoints and skeleton lines on a frame.
+
+    Args:
+        frame: RGB image as a numpy array (H, W, 3). Must be RGB not BGR.
+               (convert with cv2.cvtColor(frame, cv2.COLOR_BGR2RGB) if sourcing
+               from OpenCV or Ultralytics result.orig_img)
+        results: Ultralytics Results list from model inference.
+        keypointIndexes: mapping of joint name ot COCO keypoint index.
+        skeletonPairs: list of (jointA, jointB) pairs to draw lines between.
+        colours: mapping of joint name to RGB colour tuple.
+        confThreshold: minimum keypoint confidence to draw. Range [0, 1).
+
+    Returns:
+        Annotated copy of the input frame as an RGB numpy array.
+    """
     assert (
         colours.keys() == keypointIndexes.keys()
     ), "colours must contain all the same keys as the keypointIndexes"
