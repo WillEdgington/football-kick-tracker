@@ -44,8 +44,9 @@ This section serves as a living development log.
 
 ### Recently Completed
 <!-- Latest first. Maximum 10 items. Older entries belong in the git log. -->
+- YOLO pose model comparison (YOLO11(m)(s)(l)(n) vs YOLO26m) - see `notebooks/YOLO_candidate_comparison.ipynb`
 - `pose/visualise.py` - `drawKeypoints` with full test coverage
-- Initial two-model comparison (YOLO11m vs YOLO26m) - see `notebooks/01_2D_pose_model_comparison.ipynb`
+- Initial two-model comparison (YOLO11m vs YOLO26m) - see `notebooks/2D_pose_model_comparison.ipynb`
 - Repo scaffolding - pre-commit hooks, commitizen, pytest, ruff, black
 
 ---
