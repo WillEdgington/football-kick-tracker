@@ -8,7 +8,7 @@ A living document of research material supporting development of the football ki
 
 ## 1. Ultralytics YOLO Pose
 
-The immediate pipeline dependency for Phase 1. Understanding the output format is required before any detection logic can be designed around it. Current working default is YOLO11m-pose (see `notebooks/2D_pose_model_comparison.ipynb` for benchmarking notes and decision log).
+The immediate pipeline dependency for Phase 1. Understanding the output format is required before any detection logic can be designed around it. Current working default is YOLO11l-pose (see `notebooks/YOLO_candidate_comparison.ipynb` for benchmarking notes and decision log).
 
 **Goal:** given a frame, what does the keypoint tensor look like and how does one index into it for the leg joints?
 
