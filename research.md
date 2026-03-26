@@ -140,7 +140,36 @@ The commit message specification used in this project. The full spec is short an
 
 ---
 
-## 8. Later - Park for Now
+## 8. Ball detection and Tracking
+
+Needed for phase 3 onwards. The ball is small, fast-moving, and subject to motion blur.
+
+### Approaches to evaluate
+- **Fine-tuned YOLO11 on football data - fits existing stack, lowest friction.
+- **TrackNetV2** - designed specifically for small fast sports ball tracking using frame sequences rather than single frames. More robust to motion blur.
+- Classical CV baseline - HSV colour masking + circular Hough transform. No training data needed, fragile in cluttered scenes but useful as a sanity check.
+
+### Datasets
+- **[Roboflow Universe](https://universe.roboflow.com/)** (search "soccer ball detection") - Pre-labelled datasets in YOLO format, ready to fine-tune with.
+
+### Papers
+- **TrackNetV2** - *TrackNetV2: Efficient Shuttlecock Tracking Network (Huang et al.,2019)* - original paper, adapted for football use cases.
+  - Search: "TrackNetV2 football" and "BallTrack soccer"
+- **TrackNetV4** - *TrackNetV4: Enhancing Fast Sports Object Tracking with Motion Attention Maps*
+  - [arXiv:2409.14543](https://arxiv.org/abs/2409.14543)
+
+- **DeepBall** - a dedicated football detection network trained on broadcast footage
+  - [arXiv:1902.07304](https://arxiv.org/abs/1902.07304)
+
+### Key concepts to understand
+- Temporal ball tracking vs single-frame detection - why sequences matter for fast-moving objects
+- Kalman filtering for smoothing noisy ball position estimates across frames
+- Ball velocity estimation from position deltas across frames
+- Spatial-temporal proximity of ball to foot keypoints as a kick detection signal
+
+---
+
+## 9. Later - Park for Now
 
 Relevant in later phases. To be returned to when needed.
 
