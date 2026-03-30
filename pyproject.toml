@@ -17,7 +17,7 @@ dependencies = [
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["pose*"]
+include = ["pose*", "utils*"]
 
 [tool.commitizen]
 name = "cz_conventional_commits"
