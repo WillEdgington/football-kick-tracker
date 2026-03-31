@@ -44,6 +44,8 @@ This section serves as a living development log.
 
 ### Recently Completed
 <!-- Latest first. Maximum 10 items. Older entries belong in the git log. -->
+- Update to research.md to include Inference Smoothing, ViTPose, RTMPose sections and updated the Ball Tracking section
+- YOLO pose model tested on high quality footage of shooting training drill - see `notebooks/YOLO_pose_shooting_drills.ipynb`
 - Refactored relevant methods from `notebooks/YOLO_candidate_comparison.ipynb` into the main repo with full test coverage (methods in: `pose/annotate.py`, `pose/inference.py`, `utils/io.py`, `utils/metrics.py`)
 - YOLO pose model comparison (YOLO11(m)(s)(l)(n) vs YOLO26m) - see `notebooks/YOLO_candidate_comparison.ipynb`
 - `pose/visualise.py` - `drawKeypoints` with full test coverage
