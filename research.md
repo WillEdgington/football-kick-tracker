@@ -1,12 +1,47 @@
 # Research Avenues
 
-A living document of research material supporting development of the football kick tracker pipeline. Ordered by relevance to current phase. This will be revisited and expanded as the project progresses.
+A living document of research material supporting development of the football kick tracker pipeline. This will be revisited and expanded as the project progresses.
 
 > Initially drafted with AI assistance and will be updated throughout the project.
 
 ---
 
-## 1. Ultralytics YOLO Pose
+## Contents
+
+- [**Pose Estimation**](#pose-estimation)
+  - [Human Pose Estimation - Background](#human-pose-estimation---background)
+  - [Ultralytics YOLO POSE](#ultralytics-yolo-pose)
+  - [ViTPose](#vitpose)
+  - [RTMPose](#rtmpose)
+- [**Pose Based Action Recognition**](#pose-based-action-recognition)
+- [**Inference Smoothing**](#inference-smoothing)
+- [**OpenCV - Video and Calibration**](#opencv---video-and-calibration)
+- [**Sports Analytics and Kick Detection - Applied Work**](#sports-analytics-and-kick-detection---applied-work)
+- [**Annotation - CVAT**](#annotation---cvat)
+- [**Conventional Commits**](#conventional-commits)
+- [**Ball Detection and Tracking**](#ball-detection-and-tracking)
+- [**Later - Park for Now**](#later---park-for-now)
+---
+
+## Pose Estimation
+
+### Human Pose Estimation - Background
+
+Background on how pose estimation models work under the hood. Useful for debugging unexpected keypoint outputs and for understanding model limitations in the field.
+
+### Papers
+- **OpenPose** - *Realtime Multi-Person 2D Pose Estimation* (Cao et al., 2017) - the paper that made multi-person pose estimation practical. Foundational reading.
+  - [arXiv:1611.08050](https://arxiv.org/abs/1611.08050)
+- **HRNet** - *Deep High-Resolution Representation Learning for Visual Recognition* (Wang et al., 2019) - the architecture behind many modern pose estimators including those in MMPose.
+  - [arXiv:1908.07919](https://arxiv.org/abs/1908.07919)
+
+### Videos
+- Search YouTube: **"human pose estimation deep learning"** - good coverage exists from university CV courses
+- Search YouTube: **"YOLO pose estimation tutorial"** - practical walkthroughs of the Ultralytics pipeline
+
+---
+
+### Ultralytics YOLO Pose
 
 The immediate pipeline dependency for Phase 1. Understanding the output format is required before any detection logic can be designed around it. Current working default is YOLO11l-pose (see `notebooks/YOLO_candidate_comparison.ipynb` for benchmarking notes and decision log).
 
@@ -27,7 +62,49 @@ Run quickstart inference on any video clip and print the raw keypoint tensor to 
 
 ---
 
-## 2. Pose-Based Action Recognition
+### ViTPose
+
+A strong non-YOLO alternative for pose estimation, and a genuine candidate to replace or supplement in a future phase. ViTPose uses a plain, non-hierarchical vision transformer as a backbone with a lightweight decoder for keypoint estimation. Its key strengths are scalability across model sizes (ViT-S through ViT-H) and strong performance on the COCO benchmark. ViTPose++ extends the original to handle heterogeneous body keypoint categories across multiple pose estimation tasks simultaneously.
+Goal: understand how ViTPose's architecture differs from YOLO's approach and evaluate whether it is worth integrating into the pipeline as a candidate model.
+
+### Papers
+
+- **ViTPose** - *ViTPose: Simple Vision Transformer Baseline for Human Pose Estimation*
+  - [arXiv:2204.12484](https://arxiv.org/abs/2204.12484)
+- **ViTPose++** - *ViTPose++: Vision Transformer for Generic Body Pose Estimation*
+  - [arXiv:2212.04246](https://arxiv.org/abs/2212.04246)
+
+### Code
+
+- [GitHub: ViTAE-Transformer/ViTPose](https://github.com/ViTAE-Transformer/ViTPose) - official repo, requires mmcv/mmpose
+- [GitHub: Tau-J/rtmlib](https://github.com/Tau-J/rtmlib) - lightweight wrapper that runs ViTPose++ models without the full MMPose stack; far easier to integrate
+
+### Key concepts to understand
+
+- How plain vision transformers differ from CNN-based architectures like HRNet (used by YOLO's pose head)
+- Top-down vs bottom-up pose estimation paradigms and the trade-offs for a single-player setting
+Knowledge distillation from large to small ViTPose models via knowledge tokens - relevant for future fine-tuning
+- How `rtmlib` abstracts the inference pipeline and whether it can be slotted into the existing `pose/inference.py` structure
+
+---
+
+### RTMPose
+
+A high-performance real-time multi-person pose estimation framework built on MMPose. RTMPose is explicitly designed for practical deployment - it achieves strong COCO accuracy at high inference speeds across CPU, GPU, and mobile hardware, and supports ONNX, TensorRT, and ncnn backends. Its inference pipeline includes built-in pose NMS and smoothing filtering, which is directly relevant to the smoothing problem described in the [Inference Smoothing](#inference-smoothing) section.
+
+**Goal:** evaluate RTMPose as a cadidate, with particular attention to inference speed and the built-in smoothing pipeline.
+
+### Papers
+- **RTMPose** - *Real-Time Multi-Person Pose Estimation based on MMPose* (Jiang et al., 2023)
+  - [arXiv:2303.07399](https://arxiv.org/abs/2303.07399)
+
+### Code
+- [GitHub: open-mmlab/mmpose RTMPose project](https://github.com/open-mmlab/mmpose/tree/main/projects/rtmpose) - official implementation
+- [GitHub: Tau-J/rtmlib](https://github.com/Tau-J/rtmlib) - same lightweight wrapper as for ViTPose; supports RTMPose models without mmcv/mmpose dependencies
+
+---
+
+## Pose-Based Action Recognition
 
 The academic framing of the core detection problem. Understanding this landscape informs the rule-based detector design and the eventual neural approach.
 
@@ -51,7 +128,34 @@ The academic framing of the core detection problem. Understanding this landscape
 
 ---
 
-## 3. OpenCV - Video and Calibration
+## Inference Smoothing
+
+Noisy or jittery pose detections are an expected failure mode when using YOLO11l-pose on training footage - particularly at distance and at non-standard camera angles. This section covers approaches to smooth and stabilise keypoint predictions across frames, both classical and learned.
+
+### Approaches to understand
+
+**Kalman filtering** is the standard classical approach for smoothing noisy position estimates across frames. It models the expected motion of a tracked object and uses a predict-correct cycle to reduce noise. For pose estimation, this means treating each keypoint independently as a 2D position to be filtered. OpenCV has a built-in `cv2.KalmanFilter` implementation.
+
+- Search: *"Kalman filter pose estimation Python"* and *"Kalman filter object tracking OpenCV"*
+- Key concepts: process noise vs measurement noise, the predict/update cycle, when Kalman filtering degrades (fast, non-linear motion)
+
+**Temporal averaging / neighbour interpolation** is a simpler frame-level approach. The core idea is: given a keypoint detection in frame N, check whether frames N-1 and N+1 also contain a detection of the same person (identified by spatial proximity of keypoints). If all three frames agree on the rough position of a keypoint, the frame N value can be replaced by the mean of all three. This artificially generated pose is more stable than the raw detection alone. Key challenges are identity matching across frames (ensuring N-1 and N+1 are the same person) and handling missing detections gracefully.
+
+**RTMPose's built-in smoothing** - RTMPose's inference pipeline includes pose NMS and smoothing filtering as first-class features (see [RTMPose](#rtmpose)). Worth understanding what it does before building something custom, as it may be sufficient.
+
+**One Euro Filter** - a low-latency, parameter-tunable signal filter designed for real-time tracking. Trades off smoothing strength against lag dynamically based on the speed of the signal. A good alternative to Kalman when motion is irregular.
+
+- Search: *"One Euro Filter pose estimation"*
+- [Original One Euro Filter paper: hal.inria.fr](https://hal.inria.fr/hal-00670496/document)
+
+### Key concepts to understand
+- The difference between smoothing in post-processing (offline, full-clip context available) vs smoothing in real-time (causal, only past frames available)
+- Identity matching across frames - how to deduce that the same person was detected in two adjacent frames
+- How smoothing interacts with kick detection: over-smoothing may blur the sharp motion signal of a kick
+
+---
+
+## OpenCV - Video and Calibration
 
 Used from Phase 1 onwards for video I/O and visualisation, and for camera calibration in Phase 2.
 
@@ -72,23 +176,7 @@ Used from Phase 1 onwards for video I/O and visualisation, and for camera calibr
 
 ---
 
-## 4. Human Pose Estimation - Background
-
-Background on how pose estimation models work under the hood. Useful for debugging unexpected keypoint outputs and for understanding model limitations in the field.
-
-### Papers
-- **OpenPose** - *Realtime Multi-Person 2D Pose Estimation* (Cao et al., 2017) - the paper that made multi-person pose estimation practical. Foundational reading.
-  - [arXiv:1611.08050](https://arxiv.org/abs/1611.08050)
-- **HRNet** - *Deep High-Resolution Representation Learning for Visual Recognition* (Wang et al., 2019) - the architecture behind many modern pose estimators including those in MMPose.
-  - [arXiv:1908.07919](https://arxiv.org/abs/1908.07919)
-
-### Videos
-- Search YouTube: **"human pose estimation deep learning"** - good coverage exists from university CV courses
-- Search YouTube: **"YOLO pose estimation tutorial"** - practical walkthroughs of the Ultralytics pipeline
-
----
-
-## 5. Sports Analytics and Kick Detection - Applied Work
+## Sports Analytics and Kick Detection - Applied Work
 
 Relevant to understand the existing landscape of applied work in the space before implementing.
 
@@ -104,7 +192,7 @@ Relevant to understand the existing landscape of applied work in the space befor
 
 ---
 
-## 6. Annotation - CVAT
+## Annotation - CVAT
 
 Needed for Phase 4 dataset construction. Worth a short exploration before reaching that phase.
 
@@ -121,7 +209,7 @@ Needed for Phase 4 dataset construction. Worth a short exploration before reachi
 
 ---
 
-## 7. Conventional Commits
+## Conventional Commits
 
 The commit message specification used in this project. The full spec is short and worth reading once.
 
@@ -140,41 +228,47 @@ The commit message specification used in this project. The full spec is short an
 
 ---
 
-## 8. Ball detection and Tracking
+## Ball Detection and Tracking
 
-Needed for phase 3 onwards. The ball is small, fast-moving, and subject to motion blur.
+Needed for Phase 3 onwards. The ball is small, fast-moving, and subject to motion blur. No pretrained model exists with weights specifically trained on close-range training footage, so fine-tuning will be required at some point. The baseline candidates below are ordered by integration effort.
 
-### Approaches to evaluate
-- **Fine-tuned YOLO11 on football data - fits existing stack, lowest friction.
-- **TrackNetV2** - designed specifically for small fast sports ball tracking using frame sequences rather than single frames. More robust to motion blur.
-- Classical CV baseline - HSV colour masking + circular Hough transform. No training data needed, fragile in cluttered scenes but useful as a sanity check.
+#### Worth a read:
+- **DeepBall** - *DeepBall: Deep Neural-Network Ball Detector* - football specific ball detector. although it does not have a high chance of being used in the project, it is a great and easy enough read to understand some concepts of ball detection.
+  - [arXiv:1902.07304](https://arxiv.org/abs/1902.07304)
+
+### Baseline candidates
+
+**Fine-tuned YOLO on football data** - fits the existing stack exactly, lowest friction. Roboflow Universe has pre-labelled football datasets in YOLO format ready to fine-tune with. Limitation: YOLO is single-frame and will struggle with motion blur and fast ball movement without temporal context.
+
+**FootAndBall** - a dedicated football detector for ball and player detection, purpose-built for football broadcast footage. Uses a Feature Pyramid Network architecture to improve discriminability of small objects (the ball) by incorporating larger visual context. PyTorch-based, pretrained weights available. Limitation: trained on broadcast (long-shot, overhead) footage - expect degraded performance on close-range training drill angles without fine-tuning.
+- [GitHub: jac99/FootAndBall](https://github.com/jac99/FootAndBall)
+- [arXiv:1912.05445](https://arxiv.org/abs/1912.05445)
+
+### Sequence-based approaches (post-baseline)
+
+**TrackNetV2** - designed specifically for small fast sports ball tracking using sequences of frames rather than single frames. More robust to motion blur than single-frame detectors. Originally trained on tennis and badminton.
+- Search: *"TrackNetV2 football"* and *"BallTrack soccer"*
+
+**TrackNetV4** - extends TrackNetV2 with motion attention maps that give the model explicit context of the ball's position in previous frames. TensorFlow-based, no pretrained football weights. The motion attention mechanism is conceptually simple enough to reconstruct on top of a different backbone at a later phase.
+- [arXiv:2409.14543](https://arxiv.org/abs/2409.14543)
+- [GitHub: TrackNetV4/TrackNetV4](https://github.com/TrackNetV4/TrackNetV4)
 
 ### Datasets
-- **[Roboflow Universe](https://universe.roboflow.com/)** (search "soccer ball detection") - Pre-labelled datasets in YOLO format, ready to fine-tune with.
-
-### Papers
-- **TrackNetV2** - *TrackNetV2: Efficient Shuttlecock Tracking Network (Huang et al.,2019)* - original paper, adapted for football use cases.
-  - Search: "TrackNetV2 football" and "BallTrack soccer"
-- **TrackNetV4** - *TrackNetV4: Enhancing Fast Sports Object Tracking with Motion Attention Maps*
-  - [arXiv:2409.14543](https://arxiv.org/abs/2409.14543)
-
-- **DeepBall** - a dedicated football detection network trained on broadcast footage
-  - [arXiv:1902.07304](https://arxiv.org/abs/1902.07304)
+- [Roboflow Universe](https://universe.roboflow.com/) (search "soccer ball detection") - pre-labelled datasets in YOLO format
 
 ### Key concepts to understand
 - Temporal ball tracking vs single-frame detection - why sequences matter for fast-moving objects
-- Kalman filtering for smoothing noisy ball position estimates across frames
+- Kalman filtering for smoothing noisy ball position estimates across frames (see also [Inference Smoothing](#inference-smoothing))
 - Ball velocity estimation from position deltas across frames
 - Spatial-temporal proximity of ball to foot keypoints as a kick detection signal
 
 ---
 
-## 9. Later - Park for Now
+## Later - Park for Now
 
 Relevant in later phases. To be returned to when needed.
 
 - **Hungarian algorithm** - `scipy.optimize.linear_sum_assignment` - needed for player assignment in Phase 5. The Wikipedia page covers the conceptual model well.
-- **Kalman filtering** - useful for smoothing noisy pose detections and tracking players across frames. Search: *"Kalman filter object tracking OpenCV"*.
 - **PyTorch LSTM / 1D-CNN on sequences** - needed for Phase 7. Search: *"1D CNN time series classification PyTorch"*.
 - **ONNX and model export** - relevant for real-time deployment in Phase 8. [onnxruntime.ai](https://onnxruntime.ai)
 - **Google Colab + Google Drive pipeline** - setting up a clean data loading workflow from Drive for GPU training sessions. Worth reading before Phase 7.
