@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from utils.config import RAWTRAININGVIDEOSDIR, SESSIONSDIR
+
 CONFTHRESHOLD = 0.5
 
 LOWERCOLOURS = {
@@ -19,5 +21,8 @@ COMPSCOREWEIGHTS = {
     "right_knee_conf": 0.1,
 }
 
-RAWTRAININGVIDEOSDIR = Path("data/raw/training_drills_videos")
-ANNOTATEDPOSEVIDEOSDIR = Path("data/sessions/annotated_videos")
+ANNOTATEDPOSEVIDEOSDIR = SESSIONSDIR / Path("pose/annotated_videos")
+
+__all__ = [
+    "RAWTRAININGVIDEOSDIR",
+]
