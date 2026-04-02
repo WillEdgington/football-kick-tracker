@@ -54,6 +54,65 @@ This section serves as a living development log.
 
 ---
 
+## Development Setup
+
+### 1.Environment & Dependencies
+
+This project requires **Python 3.10**. Using a virtual environment is highly recommended.
+```bash
+python -m venv venv
+source venv/bin/activate # On Windows: venv\Scripts\activate
+
+# Install project and dependencies
+# The '-e' flag installs the project in 'editable' mode
+pip install -e .
+pip install -r requirements-dev.txt # install dev dependencies
+```
+*Note: Runtime dependencies in `requirements.txt` are handled automatically by the editable install.*
+
+### 2. Enable Quality Automation
+
+We use `pre-commit` to ensure code remains clean and follows professional standards before it reaches the repository.
+```bash
+pre-commit install
+pre-commit install --hook-type commit-msg # activate Commitizen checks
+```
+
+### 3. Workflow: Branch & Pull Request
+
+All development should occur in descriptively named branches to keep the `main` branch stable.
+  1. **Create a branch:** `git checkout -b <type>/<description>` (e.g. `feature/yolo-pose-pipeline` or `experiment/ball-tracking-comparison`).
+  2. **Commit:** Ensure your message follows the [Commitizen](#4-commit-prefixes) format. Run `pytest` locally before committing code changes.
+  3. **Sync:** Before finishing, pull the latest changes from `main` to ensure your branch is up-to-date and resolve any conflicts.
+  4. **Push & PR:** `git push -u origin <branch name>`. Open a **Pull Request** on GitHub.
+  5. **CI Check:** Automated **GitHub Actions** will run `Ruff`, `Black`, and `PyTest` on your PR. All checks must pass before merging.
+
+### 4. Commit Prefixes
+
+We follow the **Conventional Commits** standard using `Commitizen`. Every commit must start with a lowercase prefix. We encourage using bracketed scopes to specify the module being updated.
+
+|Prefix|Use Case|Example|
+|---|---|---|
+|`feat:`|A new feature|`feat: (pose) add keypoint confidence filtering`|
+|`fix:`|Fixing a bug|`fix: (utils) fix to normMethod in metrics.py`|
+|`docs:`|Documentation updates|`docs: add dev setup to README.md`|
+|`experiment:`|**(Custom)** Notebook research|`experiment: evaluate yolo11l-pose on shooting footage`|
+|`refactor:`|Code structural changes|`refactor: (ball) optimise inference loop efficiency`|
+|`chore:`|Maintenance (CI/CD, dependencies, build configs)|`chore: add ultralytics to requirements.txt`|
+|`test:`|Adding or updating `pytest` files|`test: (pose) add tests for annotate.py`|
+
+*For more details, see the [Conventional Commits Specification](https://www.conventionalcommits.org/en/v1.0.0/) and [Pre-commit Documentation](https://pre-commit.com/).*
+
+### 5. Notebook Best Practices
+
+- **Isolation:** Conduct all notebook research on an `experiment/` branch. This branch should primarily contain `experiment:` (logic/testing) and `docs:` (findings/observations) commits.
+
+- **Clean State:** Clear all cell outputs before committing. This keeps the repository size manageable and prevents Git from tracking non-essential metadata. Observations and decisions should be documented in Markdown cells.
+
+- **Refactoring:** Once an experiment is successful, refactor the core logic into the main library (`.py` modules). This should be done on a fresh `feature/` or `refactor/` branch to ensure full test coverage and architectural alignment.
+
+---
+
 ## Author
 
 Created by [**WillEdgington**](https://github.com/WillEdgington)
