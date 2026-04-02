@@ -6,14 +6,10 @@ build-backend = "setuptools.build_meta"
 name = "football-kick-tracker"
 version = "0.1.0"
 requires-python = ">=3.10"
-# Keep in sync with requirements.txt
-dependencies = [
-    "ultralytics",
-    "opencv-python",
-    "numpy",
-    "matplotlib",
-    "pandas",
-]
+dynamic = ["dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
 
 [tool.setuptools.packages.find]
 where = ["."]
