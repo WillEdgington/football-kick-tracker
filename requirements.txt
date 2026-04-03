@@ -1,6 +1,7 @@
-# Keep in sync with [project.dependencies] in pyproject.toml
+# RUNTIME DEPENDENCIES
 ultralytics
 opencv-python
 numpy
 matplotlib
 pandas
+roboflow
