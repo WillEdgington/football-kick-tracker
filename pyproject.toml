@@ -13,7 +13,7 @@ dependencies = {file = ["requirements.txt"]}
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["pose*", "utils*"]
+include = ["pose*", "utils*", "ball*"]
 
 [tool.commitizen]
 name = "cz_conventional_commits"
@@ -22,9 +22,11 @@ tag_format = "v$version"
 allowed_prefixes = ["experiment"]
 
 [tool.black]
+extend-include = '\.ipynb$'
 line-length = 88
 
 [tool.ruff]
+extend-include = ["*.ipynb"]
 line-length = 88
 
 [tool.ruff.lint]
