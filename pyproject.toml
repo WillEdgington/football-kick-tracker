@@ -22,9 +22,11 @@ tag_format = "v$version"
 allowed_prefixes = ["experiment"]
 
 [tool.black]
+extend-include = '\.ipynb$'
 line-length = 88
 
 [tool.ruff]
+extend-include = ["*.ipynb"]
 line-length = 88
 
 [tool.ruff.lint]
