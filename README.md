@@ -40,10 +40,13 @@ Track additional metrics such as kick velocity and intensity classification (sof
 This section serves as a living development log.
 
 ### Current Focus
-- **Phase 1 - Single-camera kick detector:** YOLO candidate model evaluation across multiple training drill clips
+- **Phase 1 - Single-camera kick detector:**
+  - YOLO pose model evaluation across multiple training drill clips
+  - ball tracking evaluations across multiple models and training drill clips
 
 ### Recently Completed
 <!-- Latest first. Maximum 10 items. Older entries belong in the git log. -->
+- `experiment/ball-detection-baseline`: evaluated a fine-tuned `yolo11n` and pre-trained `footandball` model for ball tracking on high quality shooting drill footage. Concluded that the fine-tuned `yolo11n` was the better baseline model.
 - `chore/update-build-system`: Integrated GitHub Actions (CI), automated dependency management via pyproject.toml, and established a Branch & PR development protocol.
 - Update to research.md to include Inference Smoothing, ViTPose, RTMPose sections and updated the Ball Tracking section
 - YOLO pose model tested on high quality footage of shooting training drill - see `notebooks/pose/YOLO_pose_shooting_drills.ipynb`
