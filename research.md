@@ -230,7 +230,7 @@ The commit message specification used in this project. The full spec is short an
 
 ## Ball Detection and Tracking
 
-Needed for Phase 3 onwards. The ball is small, fast-moving, and subject to motion blur. No pretrained model exists with weights specifically trained on close-range training footage, so fine-tuning will be required at some point. The baseline candidates below are ordered by integration effort.
+Needed for Phase 1 onwards. The ball is small, fast-moving, and subject to motion blur. No pretrained model exists with weights specifically trained on close-range training footage, so fine-tuning will be required at some point. The baseline candidates below are ordered by integration effort.
 
 #### Worth a read:
 - **DeepBall** - *DeepBall: Deep Neural-Network Ball Detector* - football specific ball detector. although it does not have a high chance of being used in the project, it is a great and easy enough read to understand some concepts of ball detection.
@@ -243,6 +243,8 @@ Needed for Phase 3 onwards. The ball is small, fast-moving, and subject to motio
 **FootAndBall** - a dedicated football detector for ball and player detection, purpose-built for football broadcast footage. Uses a Feature Pyramid Network architecture to improve discriminability of small objects (the ball) by incorporating larger visual context. PyTorch-based, pretrained weights available. Limitation: trained on broadcast (long-shot, overhead) footage - expect degraded performance on close-range training drill angles without fine-tuning.
 - [GitHub: jac99/FootAndBall](https://github.com/jac99/FootAndBall)
 - [arXiv:1912.05445](https://arxiv.org/abs/1912.05445)
+
+*Fine-tuned `yolo11n` has been chosen as the baseline model over `footandball` (see `notebooks/ball/ball_detector_baseline_shooting_drill.ipynb` for the full evaluation experiment and conclusion).*
 
 ### Sequence-based approaches (post-baseline)
 
