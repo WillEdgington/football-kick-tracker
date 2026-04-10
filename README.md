@@ -4,34 +4,59 @@ A computer vision pipeline for detecting and tracking kicks performed by footbal
 
 ---
 
-## Project Phases
+## Pipeline Components
 
-### Phase 1 - Single-Camera Kick Detector
-2D pose estimation and rule-based kick detection on single-camera footage. Single ball, single player kick count.
+### Pose Estimator
 
-### Phase 2 - Multi-Camera Kick Detector
-Extend to 3D pose estimation across multiple cameras. Rule-based kick detection with duplicate kick removal across views.
+`yolo11l-pose`. Benchmarked against YOLO11m/s/n and YOLO26m (see `notebooks/pose/YOLO_candidate_comparison.ipynb`). Some failure modes at some problem specific camera angles (see `notebooks/pose/YOLO_pose_shooting_drills.ipynb`).
 
-### Phase 3 - Multiple Ball Detection
-Handle real training session conditions with multiple balls in frame simultaneously.
+**Planned:**
+- Problem specific labelled data for fine-tuning and proper evaluation.
+- Inference smoothing.
+- Candidate evaluation: RTMPose, ViTPose
 
-### Phase 4 - Dataset Construction
-Use the rule-based pipeline to generate candidate kick events from footage. Manually verify and label events to build a ground-truth dataset for model training.
+### Ball Tracker
 
-### Phase 5 - Player Assignment
-Assign detected kicks to individual players using IMU wearable data and/or computer vision methods.
+Fine-tuned `yolo11n` single-frame detector, trained on the Roboflow `football-ball-detection` dataset (v4). Chosen over `footandball` as the baseline (see `notebooks/pose/ball_detector_baseline_shooting_drills.ipynb`).
 
-### Phase 6 - Session Output
-Attribute kicks to players and produce a per-session kick frequency table.
+**Planned:**
+- Close-range labelled data for fine-tuning and proper evaluation
+- Inference smoothing
+- Sequence-based tracking with motion attention maps for robustness against motion blur and track loss
 
-### Phase 7 - Train / Fine-Tune Pipeline
-Use the labelled dataset to train a lightweight neural network for kick detection, replacing or supplementing the rule-based approach.
+### Kick Detector
 
-### Phase 8 - Real-Time Tracker
-Extend the pipeline to support real-time kick detection and live session feedback.
+Not yet implemented.
 
-### Phase 9 - Extended Metrics
-Track additional metrics such as kick velocity and intensity classification (soft / medium / hard) to build a richer picture of training load and player output.
+**Planned:**
+- Rule-based detector using pose and ball signal (ankle velocity, foot-to-ball proximity, ball velocity change)
+- Ground-truth dataset construction from labelled footage
+- Learned detector trained on ground-truth dataset
+
+### Player Assignment
+
+Not yet implemented.
+
+**Planned:**
+- GPS wearable data for player-to-kick attribution
+- Computer vision fallback
+
+### Multi-Camera Support
+
+Not yet implemented. Single-camera only.
+
+**Planned:**
+- Extend pipeline to handle multiple simultaneous camera feeds
+- Duplicate kick removal across views
+
+### Session Output
+
+Not yet implemented.
+
+**Planned:**
+- Per-player kick count
+- Kick velocity
+- Per-session summary report
 
 ---
 
@@ -40,12 +65,14 @@ Track additional metrics such as kick velocity and intensity classification (sof
 This section serves as a living development log.
 
 ### Current Focus
-- **Phase 1 - Single-camera kick detector:**
-  - YOLO pose model evaluation across multiple training drill clips
-  - ball tracking evaluations across multiple models and training drill clips
+- **Data labelling:** annotating existing shooting drill footage in CVAT. Ball bounding boxes and pose keypoints. This will define the ground truth format for future fine-tuning and evaluation.
+- **Data collection:** searching for and collecting vaired problem specific footage across different environments, angles, balls and people to address the current data distribution problem.
+- **Ball tracker refactor:** refactoring inference helpers and evaluation logic from `notebooks/ball/ball_detector_baseline_shooting_drills.ipynb` into the `ball/` module with full test coverage.
+- **Kick detection logic:** beginning design of the rule-based kick detector using existing pose output.
 
 ### Recently Completed
 <!-- Latest first. Maximum 10 items. Older entries belong in the git log. -->
+- `docs/update-readme-phases`: old "Project Phase" section of README replaced with new "[Pipeline Components](#pipeline-components)" section. Has a more clear direction as to what needs to be built for each component of the project.
 - `experiment/ball-detection-baseline`: evaluated a fine-tuned `yolo11n` and pre-trained `footandball` model for ball tracking on high quality shooting drill footage. Concluded that the fine-tuned `yolo11n` was the better baseline model.
 - `chore/update-build-system`: Integrated GitHub Actions (CI), automated dependency management via pyproject.toml, and established a Branch & PR development protocol.
 - Update to research.md to include Inference Smoothing, ViTPose, RTMPose sections and updated the Ball Tracking section
