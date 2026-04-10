@@ -18,7 +18,6 @@ A living document of research material supporting development of the football ki
 - [**OpenCV - Video and Calibration**](#opencv---video-and-calibration)
 - [**Sports Analytics and Kick Detection - Applied Work**](#sports-analytics-and-kick-detection---applied-work)
 - [**Annotation - CVAT**](#annotation---cvat)
-- [**Conventional Commits**](#conventional-commits)
 - [**Ball Detection and Tracking**](#ball-detection-and-tracking)
 - [**Later - Park for Now**](#later---park-for-now)
 ---
@@ -43,7 +42,7 @@ Background on how pose estimation models work under the hood. Useful for debuggi
 
 ### Ultralytics YOLO Pose
 
-The immediate pipeline dependency for Phase 1. Understanding the output format is required before any detection logic can be designed around it. Current working default is YOLO11l-pose (see `notebooks/pose/YOLO_candidate_comparison.ipynb` for benchmarking notes and decision log).
+Needed for the pose estimator component. Understanding the output format is required before any detection logic can be designed around it. Current working default is YOLO11l-pose (see `notebooks/pose/YOLO_candidate_comparison.ipynb` for benchmarking notes and decision log).
 
 **Goal:** given a frame, what does the keypoint tensor look like and how does one index into it for the leg joints?
 
@@ -58,14 +57,15 @@ The immediate pipeline dependency for Phase 1. Understanding the output format i
 - How to run inference on a video vs a single frame
 
 ### Practical task
-Run quickstart inference on any video clip and print the raw keypoint tensor to the terminal. This is the most valuable first step before starting Phase 1.
+Run quickstart inference on any video clip and print the raw keypoint tensor to the terminal. This is the most valuable first step before working on the pose estimator.
 
 ---
 
 ### ViTPose
 
-A strong non-YOLO alternative for pose estimation, and a genuine candidate to replace or supplement in a future phase. ViTPose uses a plain, non-hierarchical vision transformer as a backbone with a lightweight decoder for keypoint estimation. Its key strengths are scalability across model sizes (ViT-S through ViT-H) and strong performance on the COCO benchmark. ViTPose++ extends the original to handle heterogeneous body keypoint categories across multiple pose estimation tasks simultaneously.
-Goal: understand how ViTPose's architecture differs from YOLO's approach and evaluate whether it is worth integrating into the pipeline as a candidate model.
+A strong non-YOLO alternative for pose estimation, and a genuine candidate to replace or supplement the current pose estimator. ViTPose uses a plain, non-hierarchical vision transformer as a backbone with a lightweight decoder for keypoint estimation. Its key strengths are scalability across model sizes (ViT-S through ViT-H) and strong performance on the COCO benchmark. ViTPose++ extends the original to handle heterogeneous body keypoint categories across multiple pose estimation tasks simultaneously.
+
+**Goal:** understand how ViTPose's architecture differs from YOLO's approach and evaluate whether it is worth integrating into the pipeline as a candidate model.
 
 ### Papers
 
@@ -130,7 +130,7 @@ The academic framing of the core detection problem. Understanding this landscape
 
 ## Inference Smoothing
 
-Noisy or jittery pose detections are an expected failure mode when using YOLO11l-pose on training footage - particularly at distance and at non-standard camera angles. This section covers approaches to smooth and stabilise keypoint predictions across frames, both classical and learned.
+Noisy or jittery pose detections are an expected failure mode when using YOLO11l-pose on training footage - particularly at distance and at non-standard camera angles. This section covers approaches to smooth and stabilise keypoint predictions across frames, both classical and learned. Relevant to both the pose estimator and ball tracker components.
 
 ### Approaches to understand
 
@@ -157,19 +157,19 @@ Noisy or jittery pose detections are an expected failure mode when using YOLO11l
 
 ## OpenCV - Video and Calibration
 
-Used from Phase 1 onwards for video I/O and visualisation, and for camera calibration in Phase 2.
+Needed for video I/O, visualisation, and camera calibration for multi-camera support.
 
 ### Docs
 - [OpenCV Python tutorials - official](https://docs.opencv.org/4.x/d6/d00/tutorial_py_root.html)
 - [Camera calibration tutorial](https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html)
 - [ChArUco board calibration](https://docs.opencv.org/4.x/da/d13/tutorial_aruco_calibration.html)
 
-### Phase 1 priorities
+### Needed for video I/O and visualisation
 - `cv2.VideoCapture` - reading video files frame by frame
 - `cv2.VideoWriter` - writing annotated output video
 - Drawing utilities: `cv2.circle`, `cv2.line`, `cv2.putText` - for overlaying keypoints and kick event markers
 
-### Phase 2 priorities (park for now)
+### Needed for multi-camera support
 - Camera intrinsics and extrinsics - the conceptual model of what calibration is computing
 - `cv2.calibrateCamera` and `cv2.solvePnP`
 - Triangulation with `cv2.triangulatePoints`
@@ -184,7 +184,7 @@ Relevant to understand the existing landscape of applied work in the space befor
 - **SoccerNet** - *A Scalable Dataset for Action Spotting in Soccer Videos* (Giancola et al., 2018) - the main academic football video dataset. Action spotting is closely related to the kick detection problem.
   - [arXiv:1804.04527](https://arxiv.org/abs/1804.04527)
 - **Action Spotting in Soccer** - search arXiv for recent SoccerNet challenge papers (2021–2024); the challenge has pushed the state of the art on temporal event detection in football footage.
-- **Inertial Sensor Kick Detection** - search Google Scholar: *"football kick detection IMU"* or *"soccer kick detection inertial sensor"* - relevant for Phase 5 IMU integration.
+- **Inertial Sensor Kick Detection** - search Google Scholar: *"football kick detection IMU"* or *"soccer kick detection inertial sensor"* - elevant for player assignment.
 
 ### Videos
 - Search YouTube: **"SoccerNet action spotting"** - workshop presentations give a good overview of the problem space
@@ -194,7 +194,7 @@ Relevant to understand the existing landscape of applied work in the space befor
 
 ## Annotation - CVAT
 
-Needed for Phase 4 dataset construction. Worth a short exploration before reaching that phase.
+Needed for data labelling and dataset construction.
 
 ### Docs
 - [CVAT.ai - getting started](https://docs.cvat.ai/docs/getting-started/)
@@ -209,28 +209,9 @@ Needed for Phase 4 dataset construction. Worth a short exploration before reachi
 
 ---
 
-## Conventional Commits
-
-The commit message specification used in this project. The full spec is short and worth reading once.
-
-- [conventionalcommits.org - full specification](https://www.conventionalcommits.org/en/v1.0.0/)
-
-### Types relevant to this project
-| Type | When to use |
-|---|---|
-| `feat` | A new capability added to the pipeline |
-| `fix` | A bug fix |
-| `chore` | Tooling, config, maintenance - no production code change |
-| `docs` | README, comments, docstrings |
-| `refactor` | Code restructured without behaviour change |
-| `test` | Adding or updating tests |
-| `experiment` | Non-standard but useful for notebook/research commits |
-
----
-
 ## Ball Detection and Tracking
 
-Needed for Phase 1 onwards. The ball is small, fast-moving, and subject to motion blur. No pretrained model exists with weights specifically trained on close-range training footage, so fine-tuning will be required at some point. The baseline candidates below are ordered by integration effort.
+Needed for the ball tracker component. The ball is small, fast-moving, and subject to motion blur. No pretrained model exists with weights specifically trained on close-range training footage, so fine-tuning will be required. The baseline candidates below are ordered by integration effort.
 
 #### Worth a read:
 - **DeepBall** - *DeepBall: Deep Neural-Network Ball Detector* - football specific ball detector. although it does not have a high chance of being used in the project, it is a great and easy enough read to understand some concepts of ball detection.
@@ -268,9 +249,9 @@ Needed for Phase 1 onwards. The ball is small, fast-moving, and subject to motio
 
 ## Later - Park for Now
 
-Relevant in later phases. To be returned to when needed.
+Relevant to future components. To be returned to when needed.
 
-- **Hungarian algorithm** - `scipy.optimize.linear_sum_assignment` - needed for player assignment in Phase 5. The Wikipedia page covers the conceptual model well.
-- **PyTorch LSTM / 1D-CNN on sequences** - needed for Phase 7. Search: *"1D CNN time series classification PyTorch"*.
-- **ONNX and model export** - relevant for real-time deployment in Phase 8. [onnxruntime.ai](https://onnxruntime.ai)
-- **Google Colab + Google Drive pipeline** - setting up a clean data loading workflow from Drive for GPU training sessions. Worth reading before Phase 7.
+- **Hungarian algorithm** - `scipy.optimize.linear_sum_assignment` - needed for player assignment. The Wikipedia page covers the conceptual model well.
+- **PyTorch LSTM / 1D-CNN on sequences** - needed for the learned kick detector. Search: *"1D CNN time series classification PyTorch"*.
+- **ONNX and model export** - relevant for deployment. [onnxruntime.ai](https://onnxruntime.ai)
+- **Google Colab + Google Drive pipeline** - setting up a clean data loading workflow from Drive for GPU training sessions.
