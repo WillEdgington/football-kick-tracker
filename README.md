@@ -72,7 +72,7 @@ This section serves as a living development log.
 
 ### Recently Completed
 <!-- Latest first. Maximum 10 items. Older entries belong in the git log. -->
-- `docs/update-readme-phases`: old "Project Phase" section of README replaced with new "[Pipeline Components](#pipeline-components)" section. Has a more clear direction as to what needs to be built for each component of the project.
+- `docs/update-readme-phases`: old "Project Phase" section of README replaced with new "[Pipeline Components](#pipeline-components)" section. Has a more clear direction as to what needs to be built for each component of the project. Updates to research.md to replace phase references and remove commitizen section.
 - `experiment/ball-detection-baseline`: evaluated a fine-tuned `yolo11n` and pre-trained `footandball` model for ball tracking on high quality shooting drill footage. Concluded that the fine-tuned `yolo11n` was the better baseline model.
 - `chore/update-build-system`: Integrated GitHub Actions (CI), automated dependency management via pyproject.toml, and established a Branch & PR development protocol.
 - Update to research.md to include Inference Smoothing, ViTPose, RTMPose sections and updated the Ball Tracking section
