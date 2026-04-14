@@ -72,16 +72,16 @@ This section serves as a living development log.
 
 ### Recently Completed
 <!-- Latest first. Maximum 10 items. Older entries belong in the git log. -->
-- `docs/update-readme-phases`: old "Project Phase" section of README replaced with new "[Pipeline Components](#pipeline-components)" section. Has a more clear direction as to what needs to be built for each component of the project. Updates to research.md to replace phase references and remove commitizen section.
+- `chore/docs-restructuring`: `/docs` directory created for any secondary documentation, `research.md` renamed to `RESEARCH.md` and relocated to inside `docs/`. Checked for any internal links that may be affected from restructure, found None.
+- `docs/update-readme-phases`: old "Project Phase" section of README replaced with new "[Pipeline Components](#pipeline-components)" section. Has a more clear direction as to what needs to be built for each component of the project. Updates to `research.md` to replace phase references and remove commitizen section.
 - `experiment/ball-detection-baseline`: evaluated a fine-tuned `yolo11n` and pre-trained `footandball` model for ball tracking on high quality shooting drill footage. Concluded that the fine-tuned `yolo11n` was the better baseline model.
 - `chore/update-build-system`: Integrated GitHub Actions (CI), automated dependency management via pyproject.toml, and established a Branch & PR development protocol.
-- Update to research.md to include Inference Smoothing, ViTPose, RTMPose sections and updated the Ball Tracking section
+- Update to `research.md` to include Inference Smoothing, ViTPose, RTMPose sections and updated the Ball Tracking section
 - YOLO pose model tested on high quality footage of shooting training drill - see `notebooks/pose/YOLO_pose_shooting_drills.ipynb`
 - Refactored relevant methods from `notebooks/pose/YOLO_candidate_comparison.ipynb` into the main repo with full test coverage (methods in: `pose/annotate.py`, `pose/inference.py`, `utils/io.py`, `utils/metrics.py`)
 - YOLO pose model comparison (YOLO11(m)(s)(l)(n) vs YOLO26m) - see `notebooks/pose/YOLO_candidate_comparison.ipynb`
 - `pose/visualise.py` - `drawKeypoints` with full test coverage
 - Initial two-model comparison (YOLO11m vs YOLO26m) - see `notebooks/pose/2D_pose_model_comparison.ipynb`
-- Repo scaffolding - pre-commit hooks, commitizen, pytest, ruff, black
 
 ---
 
