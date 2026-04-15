@@ -5,6 +5,7 @@ import pytest
 
 from pose.inference import (
     _keypointConfidenceOneVideo,
+    getRawVideoYOLOPose,
     keypointConfidenceFromVideos,
 )
 
@@ -191,3 +192,52 @@ def test_keypointConfidenceFromVideos_loadsCacheFromDiskWhenCacheIsNone(
         )
     assert out is not None
     model.assert_not_called()
+
+
+def test_getRawVideoYOLOPose_structure_isCorrect(videoPath):
+    mockKps = MagicMock()
+    mockKps.__getitem__.return_value.tolist.return_value = [100.0, 200.0, 0.9]
+
+    result = MagicMock()
+    result.keypoints.data = [mockKps]
+    result.boxes.data = MagicMock()
+    result.boxes.data.__getitem__.return_value.tolist.return_value = [10, 20, 30, 40]
+    result.boxes.data.__getitem__.return_value.__float__.return_value = 0.95
+
+    model = MagicMock()
+    model.side_effect = lambda *a, **kw: iter([result])
+
+    with patch("pose.inference.cv2.VideoCapture") as mockCap:
+        mockCap.return_value.get.return_value = 1
+        out = getRawVideoYOLOPose(
+            model=model,
+            path=videoPath,
+            keypointIndexes=KEYPOINTINDEXES,
+            logging=False,
+        )
+
+    assert len(out) == 1
+    assert out[0]["frame"] == 0
+    detection = out[0]["detections"][0]
+    assert detection["box"] == [10, 20, 30, 40]
+    assert detection["conf"] == 0.95
+    assert detection["keypoints"]["left_ankle"] == [100.0, 200.0, 0.9]
+
+
+def test_getRawVideoYOLOPose_noDetections_returnsEmptyDetectionsList(videoPath):
+    result = MagicMock()
+    result.keypoints = None  # no keypoints
+    model = MagicMock()
+    model.side_effect = lambda *a, **kw: iter([result])
+
+    with patch("pose.inference.cv2.VideoCapture") as mockCap:
+        mockCap.return_value.get.return_value = 1
+        out = getRawVideoYOLOPose(
+            model=model,
+            path=videoPath,
+            keypointIndexes=KEYPOINTINDEXES,
+            logging=False,
+        )
+
+    assert len(out) == 1
+    assert out[0]["detections"] == []
