@@ -1,17 +1,19 @@
-# These tests were initially created with heavy amounts of AI assistance
 import json
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-from pose.inference import _keypointConfidenceOneVideo, keypointConfidenceFromVideos
+from pose.inference import (
+    _keypointConfidenceOneVideo,
+    keypointConfidenceFromVideos,
+)
 
-KEYPOINT_INDEXES = {"left_ankle": 15, "right_ankle": 16}
+KEYPOINTINDEXES = {"left_ankle": 15, "right_ankle": 16}
 
 
 @pytest.fixture
 def videoPath(tmp_path):
-    p = tmp_path / "clip.mp4"
+    p = tmp_path / "pose_clip.mp4"
     p.touch()
     return p
 
@@ -33,7 +35,7 @@ def test_keypointConfidenceOneVideo_noDetections_returnsNone(videoPath):
             model=model,
             path=videoPath,
             name="yolo11l-pose",
-            keypointIndexes=KEYPOINT_INDEXES,
+            keypointIndexes=KEYPOINTINDEXES,
             logging=False,
         )
     assert out is None
@@ -52,7 +54,7 @@ def test_keypointConfidenceOneVideo_cacheHit_skipsProcessing(videoPath):
         model=model,
         path=videoPath,
         name="yolo11l-pose",
-        keypointIndexes=KEYPOINT_INDEXES,
+        keypointIndexes=KEYPOINTINDEXES,
         logging=False,
         cache=cache,
     )
@@ -80,7 +82,7 @@ def test_keypointConfidenceOneVideo_detectionRate_isDetectionsDividedByFrames(
             model=model,
             path=videoPath,
             name="yolo11l-pose",
-            keypointIndexes=KEYPOINT_INDEXES,
+            keypointIndexes=KEYPOINTINDEXES,
             logging=False,
         )
     assert out["detection_rate"] == pytest.approx(1.0)
@@ -108,7 +110,7 @@ def test_keypointConfidenceOneVideo_meanConfidence_isCorrect(videoPath):
             model=model,
             path=videoPath,
             name="yolo11l-pose",
-            keypointIndexes=KEYPOINT_INDEXES,
+            keypointIndexes=KEYPOINTINDEXES,
             logging=False,
         )
     assert out["left_ankle_conf"] == pytest.approx(0.7)
@@ -131,7 +133,7 @@ def test_keypointConfidenceOneVideo_cacheMiss_writesToCache(videoPath, cachePath
             model=model,
             path=videoPath,
             name="yolo11l-pose",
-            keypointIndexes=KEYPOINT_INDEXES,
+            keypointIndexes=KEYPOINTINDEXES,
             logging=False,
             cache=cache,
             cachePath=cachePath,
@@ -150,7 +152,7 @@ def test_keypointConfidenceFromVideos_allVideosNoDetections_returnsNone(tmp_path
             model=MagicMock(),
             paths=paths,
             name="yolo11l-pose",
-            keypointIndexes=KEYPOINT_INDEXES,
+            keypointIndexes=KEYPOINTINDEXES,
             logging=False,
         )
     assert out is None
@@ -182,7 +184,7 @@ def test_keypointConfidenceFromVideos_loadsCacheFromDiskWhenCacheIsNone(
             model=model,
             paths=paths,
             name="yolo11l-pose",
-            keypointIndexes=KEYPOINT_INDEXES,
+            keypointIndexes=KEYPOINTINDEXES,
             logging=False,
             cache=None,
             cachePath=cachePath,
