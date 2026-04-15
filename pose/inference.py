@@ -1,12 +1,12 @@
 from pathlib import Path
-from typing import Dict, List
+from typing import Any, Dict, List
 
 import cv2
 from ultralytics import YOLO
 
 from utils.io import loadJSON, saveJSON
 
-from .constants import LOWERKEYPOINTS
+from .constants import BODYKEYPOINTS, LOWERKEYPOINTS
 
 
 def _keypointConfidenceOneVideo(
@@ -105,4 +105,51 @@ def keypointConfidenceFromVideos(
         results[key] /= nsamples
 
     results["model"] = name
+    return results
+
+
+def getRawVideoYOLOPose(
+    model: YOLO,
+    path: Path,
+    keypointIndexes: Dict[str, int] = BODYKEYPOINTS,
+    name: str = "YOLO-pose",
+    logging: bool = True,
+) -> List[Dict[str, Any]]:
+    if logging:
+        print(f"[{name}] Processing {path.name}...")
+    results = []
+
+    cap = cv2.VideoCapture(str(path))
+    totalFrames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    cap.release()
+
+    for frameIdx, result in enumerate(model(str(path), stream=True, verbose=False)):
+        if logging:
+            print(f"  [{name}] frame {frameIdx + 1}/{totalFrames}", end="\r")
+        frameData = {
+            "frame": frameIdx,
+            "detections": [],
+        }
+        if result.keypoints is None or len(result.keypoints.data) == 0:
+            results.append(frameData)
+            continue
+
+        boxes = result.boxes.data
+        kps = result.keypoints.data
+
+        for personIdx in range(len(kps)):
+            frameData["detections"].append(
+                {
+                    "box": boxes[personIdx, :4].tolist(),
+                    "conf": float(boxes[personIdx, 4]),
+                    "keypoints": {
+                        key: kps[personIdx][kpIdx].tolist()
+                        for key, kpIdx in keypointIndexes.items()
+                    },
+                }
+            )
+        results.append(frameData)
+
+    if logging:
+        print(f"\n[{name}] Processing Complete.")
     return results
