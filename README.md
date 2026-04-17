@@ -72,6 +72,8 @@ This section serves as a living development log.
 
 ### Recently Completed
 <!-- Latest first. Maximum 10 items. Older entries belong in the git log. -->
+- `feat/cvat-preannotation-tooling`: created methods to convert raw model inference into CVAT compatible XML for ball (`ball/cvat.py`) and pose (`pose/cvat.py`) models with test coverage. Created CLI scripts for the pre-annotation pipeline for ball (`tools/preannotate_ball.py`) and pose (`tools/preannotate_pose.py) YOLO-based models.
+- `feat/common-utils-overhaul`: `saveText` method (in `utils/io.py`) for saving a string object to a file, `getVideoInfo` method (in `utils/video.py`) that returns the common video metadata info, `loadYOLOModel` method (in `utils/yolo.py`) for loading YOLO models. All new utility methods have full test coverage.
 - `feat/raw-inference-pipeline`: renamed test scripts from test_{module}.py to test_{library}_{module}.py to avoid collision errors. expanded pose constants to include more COCO keypoints (face, upper, all, body). Created YOLO compatible raw video inference methods for pose and ball models (this included the creation of `ball/inference.py`). Full test coverage for new methods.
 - `chore/docs-restructuring`: `/docs` directory created for any secondary documentation, `research.md` renamed to `RESEARCH.md` and relocated to inside `docs/`. Checked for any internal links that may be affected from restructure, found None.
 - `docs/update-readme-phases`: old "Project Phase" section of README replaced with new "[Pipeline Components](#pipeline-components)" section. Has a more clear direction as to what needs to be built for each component of the project. Updates to `research.md` to replace phase references and remove commitizen section.
@@ -80,8 +82,6 @@ This section serves as a living development log.
 - Update to `research.md` to include Inference Smoothing, ViTPose, RTMPose sections and updated the Ball Tracking section
 - YOLO pose model tested on high quality footage of shooting training drill - see `notebooks/pose/YOLO_pose_shooting_drills.ipynb`
 - Refactored relevant methods from `notebooks/pose/YOLO_candidate_comparison.ipynb` into the main repo with full test coverage (methods in: `pose/annotate.py`, `pose/inference.py`, `utils/io.py`, `utils/metrics.py`)
-- YOLO pose model comparison (YOLO11(m)(s)(l)(n) vs YOLO26m) - see `notebooks/pose/YOLO_candidate_comparison.ipynb`
-- `pose/visualise.py` - `drawKeypoints` with full test coverage
 
 ---
 
@@ -148,9 +148,7 @@ We follow the **Conventional Commits** standard using `Commitizen`. Every commit
 
 Created by [**WillEdgington**](https://github.com/WillEdgington)
 
-📧 [willedge037@gmail.com](mailto:willedge037@gmail.com)
-
-🔗 [LinkedIn](https://www.linkedin.com/in/williamedgington/)
+📧 [**willedge037@gmail.com**](mailto:willedge037@gmail.com) &nbsp;|&nbsp; 🔗 [**LinkedIn**](https://www.linkedin.com/in/williamedgington/)
 
 ## License
 
