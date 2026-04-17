@@ -22,3 +22,16 @@ def loadJSON(path: Path) -> List[Dict] | Dict | None:
         return None
     with open(path, "r") as f:
         return json.load(f)
+
+
+def saveText(text: str, path: Path) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmpPath = path.with_suffix(".tmp")
+    try:
+        with open(tmpPath, "w", encoding="utf-8") as f:
+            f.write(text)
+        os.replace(tmpPath, path)
+    except Exception as e:
+        if tmpPath.exists():
+            tmpPath.unlink()
+        raise e
