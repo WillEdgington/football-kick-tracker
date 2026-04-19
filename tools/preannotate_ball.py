@@ -1,6 +1,7 @@
 import argparse
 from pathlib import Path
 
+from ball.config import BESTBALLMODELPATH, CVATEXPORTSBALLDIR
 from ball.cvat import toCVATVideoXML
 from ball.inference import getRawVideoYOLOBall
 from utils.io import saveText
@@ -14,13 +15,13 @@ def main():
     parser.add_arguement(
         "--model",
         type=str,
-        default="models/yolo11n_ball/weights/best.pt",
+        default=str(BESTBALLMODELPATH),
         help="Path to model",
     )
     parser.add_arguement(
         "--output_dir",
         type=str,
-        default="data/annotated/cvat_exports/ball",
+        default=str(CVATEXPORTSBALLDIR),
         help="Output Directory",
     )
     args = parser.parse_args()
