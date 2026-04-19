@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from utils.config import RAWTRAININGVIDEOSDIR, SESSIONSDIR
+from utils.config import CVATEXPORTSDIR, MODELSPATH, RAWTRAININGVIDEOSDIR, SESSIONSDIR
 
 CONFTHRESHOLD = 0.5
 
@@ -22,6 +22,10 @@ COMPSCOREWEIGHTS = {
 }
 
 ANNOTATEDPOSEVIDEOSDIR = SESSIONSDIR / Path("pose/annotated_videos")
+CVATEXPORTSPOSEDIR = CVATEXPORTSDIR / Path("pose")
+
+# current best model is standard version of yolo11l-pose model
+BESTPOSEMODELPATH = MODELSPATH / Path("yolo11l-pose.pt")
 
 __all__ = [
     "RAWTRAININGVIDEOSDIR",
