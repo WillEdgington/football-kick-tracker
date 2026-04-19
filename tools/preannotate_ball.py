@@ -10,15 +10,15 @@ from utils.yolo import loadYOLOModel
 
 
 def main():
-    parser = argparse.ArguementParser(description="YOLO Ball to CVAT XML")
-    parser.add_arguement("--video", type=str, required=True, help="Path to input video")
-    parser.add_arguement(
+    parser = argparse.ArgumentParser(description="YOLO Ball to CVAT XML")
+    parser.add_argument("--video", type=str, required=True, help="Path to input video")
+    parser.add_argument(
         "--model",
         type=str,
         default=str(BESTBALLMODELPATH),
         help="Path to model",
     )
-    parser.add_arguement(
+    parser.add_argument(
         "--output_dir",
         type=str,
         default=str(CVATEXPORTSBALLDIR),
