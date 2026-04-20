@@ -67,11 +67,11 @@ This section serves as a living development log.
 ### Current Focus
 - **Data labelling:** annotating existing shooting drill footage in CVAT. Ball bounding boxes and pose keypoints. This will define the ground truth format for future fine-tuning and evaluation.
 - **Data collection:** searching for and collecting vaired problem specific footage across different environments, angles, balls and people to address the current data distribution problem.
-- **Ball tracker refactor:** refactoring inference helpers and evaluation logic from `notebooks/ball/ball_detector_baseline_shooting_drills.ipynb` into the `ball/` module with full test coverage.
 - **Kick detection logic:** beginning design of the rule-based kick detector using existing pose output.
 
 ### Recently Completed
 <!-- Latest first. Maximum 10 items. Older entries belong in the git log. -->
+- `feat/preannotation-batch-processing`: `getAllVideoPaths` (`utils/video.py`) method for getting video paths from a directory, `batchCVATYOLOPosePreannotation` (`pose/preannotate.py`) method for batch CVAT pose pre-annotation, `batchCVATYOLOBallPreannotation` (`ball/preannotate.py`) method for batch CVAT ball pre-annotation. Refactored `tools/preannotate_pose.py`, `tools/preannotate_ball.py` CLI scripts for batch processing.
 - `feat/cvat-preannotation-tooling`: created methods to convert raw model inference into CVAT compatible XML for ball (`ball/cvat.py`) and pose (`pose/cvat.py`) models with test coverage. Created CLI scripts for the pre-annotation pipeline for ball (`tools/preannotate_ball.py`) and pose (`tools/preannotate_pose.py) YOLO-based models.
 - `feat/common-utils-overhaul`: `saveText` method (in `utils/io.py`) for saving a string object to a file, `getVideoInfo` method (in `utils/video.py`) that returns the common video metadata info, `loadYOLOModel` method (in `utils/yolo.py`) for loading YOLO models. All new utility methods have full test coverage.
 - `feat/raw-inference-pipeline`: renamed test scripts from test_{module}.py to test_{library}_{module}.py to avoid collision errors. expanded pose constants to include more COCO keypoints (face, upper, all, body). Created YOLO compatible raw video inference methods for pose and ball models (this included the creation of `ball/inference.py`). Full test coverage for new methods.
@@ -81,7 +81,6 @@ This section serves as a living development log.
 - `chore/update-build-system`: Integrated GitHub Actions (CI), automated dependency management via pyproject.toml, and established a Branch & PR development protocol.
 - Update to `research.md` to include Inference Smoothing, ViTPose, RTMPose sections and updated the Ball Tracking section
 - YOLO pose model tested on high quality footage of shooting training drill - see `notebooks/pose/YOLO_pose_shooting_drills.ipynb`
-- Refactored relevant methods from `notebooks/pose/YOLO_candidate_comparison.ipynb` into the main repo with full test coverage (methods in: `pose/annotate.py`, `pose/inference.py`, `utils/io.py`, `utils/metrics.py`)
 
 ---
 

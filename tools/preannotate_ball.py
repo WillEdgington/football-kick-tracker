@@ -1,43 +1,63 @@
 import argparse
 from pathlib import Path
 
-from ball.cvat import toCVATVideoXML
-from ball.inference import getRawVideoYOLOBall
-from utils.io import saveText
-from utils.video import getVideoInfo
+from ball.config import BESTBALLMODELPATH, CVATEXPORTSBALLDIR
+from ball.preannotate import batchCVATYOLOBallPreannotation
+from utils.config import RAWTRAININGVIDEOSDIR
+from utils.video import getAllVideoPaths
 from utils.yolo import loadYOLOModel
 
 
 def main():
-    parser = argparse.ArguementParser(description="YOLO Ball to CVAT XML")
-    parser.add_arguement("--video", type=str, required=True, help="Path to input video")
-    parser.add_arguement(
+    parser = argparse.ArgumentParser(description="YOLO Ball to CVAT XML")
+    parser.add_argument(
+        "--video",
+        type=str,
+        default=str(RAWTRAININGVIDEOSDIR),
+        help="Path to input video",
+    )
+    parser.add_argument(
         "--model",
         type=str,
-        default="models/yolo11n_ball/weights/best.pt",
+        default=str(BESTBALLMODELPATH),
         help="Path to model",
     )
-    parser.add_arguement(
+    parser.add_argument(
         "--output_dir",
         type=str,
-        default="data/annotated/cvat_exports/ball",
+        default=str(CVATEXPORTSBALLDIR),
         help="Output Directory",
+    )
+    parser.add_argument(
+        "--overwrite",
+        type=bool,
+        default=False,
+        help="Overwrite XML files of same name",
     )
     args = parser.parse_args()
 
     videoPath = Path(args.video)
     modelPath = Path(args.model)
-    outputPath = Path(args.output_dir) / f"{videoPath.stem}_ball.xml"
+    outputDir = Path(args.output_dir)
+    overwrite = bool(args.overwrite)
 
-    videoInfo = getVideoInfo(videoPath)
-    model = loadYOLOModel(modelPath)
+    if videoPath.is_dir():
+        videoFiles = getAllVideoPaths(
+            videoDir=videoPath,
+        )
+        if not videoFiles:
+            print(f"[Error] No .mp4 or .mov files found in {videoPath}")
+            return
+    else:
+        videoFiles = [videoPath]
 
-    raw = getRawVideoYOLOBall(model, videoPath)
-    xml = toCVATVideoXML(
-        frames=raw, totalFrames=videoInfo["frame_count"], taskName=videoPath.stem
+    model = loadYOLOModel(modelPath=modelPath)
+    batchCVATYOLOBallPreannotation(
+        model=model,
+        videoPaths=videoFiles,
+        outputDir=outputDir,
+        overwrite=overwrite,
     )
-    saveText(xml, outputPath)
-    print(f"[Done] Exported: {outputPath}")
 
 
 if __name__ == "__main__":
