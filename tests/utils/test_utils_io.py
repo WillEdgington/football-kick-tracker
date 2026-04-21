@@ -1,8 +1,10 @@
 import json
+from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 
-from utils.io import loadJSON, saveJSON, saveText
+from utils.io import loadJSON, resolvePath, saveJSON, saveText
 
 
 @pytest.fixture
@@ -56,3 +58,24 @@ def test_saveText_cleansTmpFileOnFailure(tmp_path):
     with pytest.raises(Exception):
         saveText(None, path)
     assert not path.with_suffix(".tmp").exists()
+
+
+def test_resolvePath_rootPrependsToPath():
+    path = "fake_dir"
+    root = "fake_root/football-kick-tracker"
+    assert Path(root) / Path(path) == resolvePath(root, path)
+    assert Path(root) / Path(path) == resolvePath(Path(root), Path(path))
+
+
+def test_resolvePath_emptyRootReturnsInputPath():
+    path = Path("fake_dir")
+    assert path == resolvePath("", path)
+    assert path == resolvePath(".", path)
+
+
+def test_resolvePath_absoluteInputPathDoesNotPrependRoot():
+    path = Path("absolute_path/football-kick-tracker")
+    root = Path("ignored_root")
+    with patch("utils.io.Path.is_absolute") as mockAbsolute:
+        mockAbsolute.return_value = True
+        assert path == resolvePath(root, path)

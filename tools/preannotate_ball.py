@@ -4,12 +4,19 @@ from pathlib import Path
 from ball.config import BESTBALLMODELPATH, CVATEXPORTSBALLDIR
 from ball.preannotate import batchCVATYOLOBallPreannotation
 from utils.config import RAWTRAININGVIDEOSDIR
+from utils.io import resolvePath
 from utils.video import getAllVideoPaths
 from utils.yolo import loadYOLOModel
 
 
 def main():
     parser = argparse.ArgumentParser(description="YOLO Ball to CVAT XML")
+    parser.add_argument(
+        "--root",
+        type=str,
+        default=".",
+        help="Project root directory",
+    )
     parser.add_argument(
         "--video",
         type=str,
@@ -26,20 +33,20 @@ def main():
         "--output_dir",
         type=str,
         default=str(CVATEXPORTSBALLDIR),
-        help="Output Directory",
+        help="Output directory",
     )
     parser.add_argument(
         "--overwrite",
-        type=bool,
-        default=False,
+        action="store_true",
         help="Overwrite XML files of same name",
     )
     args = parser.parse_args()
 
-    videoPath = Path(args.video)
-    modelPath = Path(args.model)
-    outputDir = Path(args.output_dir)
-    overwrite = bool(args.overwrite)
+    root = Path(args.root)
+    videoPath = resolvePath(root, args.video)
+    modelPath = resolvePath(root, args.model)
+    outputDir = resolvePath(root, args.output_dir)
+    overwrite = args.overwrite
 
     if videoPath.is_dir():
         videoFiles = getAllVideoPaths(

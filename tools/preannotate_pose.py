@@ -5,6 +5,7 @@ from pose.config import BESTPOSEMODELPATH, CVATEXPORTSPOSEDIR
 from pose.constants import BODYKEYPOINTS
 from pose.preannotate import batchCVATYOLOPosePreannotation
 from utils.config import RAWTRAININGVIDEOSDIR
+from utils.io import resolvePath
 from utils.video import getAllVideoPaths
 from utils.yolo import loadYOLOModel
 
@@ -12,32 +13,41 @@ from utils.yolo import loadYOLOModel
 def main():
     parser = argparse.ArgumentParser(description="YOLO Pose to CVAT XML")
     parser.add_argument(
+        "--root",
+        type=str,
+        default=".",
+        help="Project root directory",
+    )
+    parser.add_argument(
         "--video",
         type=str,
         default=str(RAWTRAININGVIDEOSDIR),
         help="Path to input video",
     )
     parser.add_argument(
-        "--model", type=str, default=str(BESTPOSEMODELPATH), help="Path to model"
+        "--model",
+        type=str,
+        default=str(BESTPOSEMODELPATH),
+        help="Path to model",
     )
     parser.add_argument(
         "--output_dir",
         type=str,
         default=str(CVATEXPORTSPOSEDIR),
-        help="Output Directory",
+        help="Output directory",
     )
     parser.add_argument(
         "--overwrite",
-        type=bool,
-        default=False,
+        action="store_true",
         help="Overwrite XML files of same name",
     )
     args = parser.parse_args()
 
-    videoPath = Path(args.video)
-    modelPath = Path(args.model)
-    outputDir = Path(args.output_dir)
-    overwrite = bool(args.overwrite)
+    root = Path(args.root)
+    videoPath = resolvePath(root, args.video)
+    modelPath = resolvePath(root, args.model)
+    outputDir = resolvePath(root, args.output_dir)
+    overwrite = args.overwrite
 
     if videoPath.is_dir():
         videoFiles = getAllVideoPaths(

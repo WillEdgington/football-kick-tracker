@@ -71,6 +71,7 @@ This section serves as a living development log.
 
 ### Recently Completed
 <!-- Latest first. Maximum 10 items. Older entries belong in the git log. -->
+- `feat/preannotation-CLI-root-arg`: created `resolvePath` (`utils/io.py`) method for resolving a path from a given `root` and `path` input. Refactored `tools/preannotate_pose.py`, `tools/preannotate_ball.py` CLI scripts with addition of `--root` input argument to allow for user to input a custom project root directory rather than the default assumption (`.`).
 - `feat/preannotation-batch-processing`: `getAllVideoPaths` (`utils/video.py`) method for getting video paths from a directory, `batchCVATYOLOPosePreannotation` (`pose/preannotate.py`) method for batch CVAT pose pre-annotation, `batchCVATYOLOBallPreannotation` (`ball/preannotate.py`) method for batch CVAT ball pre-annotation. Refactored `tools/preannotate_pose.py`, `tools/preannotate_ball.py` CLI scripts for batch processing.
 - `feat/cvat-preannotation-tooling`: created methods to convert raw model inference into CVAT compatible XML for ball (`ball/cvat.py`) and pose (`pose/cvat.py`) models with test coverage. Created CLI scripts for the pre-annotation pipeline for ball (`tools/preannotate_ball.py`) and pose (`tools/preannotate_pose.py) YOLO-based models.
 - `feat/common-utils-overhaul`: `saveText` method (in `utils/io.py`) for saving a string object to a file, `getVideoInfo` method (in `utils/video.py`) that returns the common video metadata info, `loadYOLOModel` method (in `utils/yolo.py`) for loading YOLO models. All new utility methods have full test coverage.
@@ -80,7 +81,6 @@ This section serves as a living development log.
 - `experiment/ball-detection-baseline`: evaluated a fine-tuned `yolo11n` and pre-trained `footandball` model for ball tracking on high quality shooting drill footage. Concluded that the fine-tuned `yolo11n` was the better baseline model.
 - `chore/update-build-system`: Integrated GitHub Actions (CI), automated dependency management via pyproject.toml, and established a Branch & PR development protocol.
 - Update to `research.md` to include Inference Smoothing, ViTPose, RTMPose sections and updated the Ball Tracking section
-- YOLO pose model tested on high quality footage of shooting training drill - see `notebooks/pose/YOLO_pose_shooting_drills.ipynb`
 
 ---
 
