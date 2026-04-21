@@ -35,3 +35,12 @@ def saveText(text: str, path: Path) -> None:
         if tmpPath.exists():
             tmpPath.unlink()
         raise e
+
+
+def resolvePath(root: str | Path, path: str | Path) -> Path:
+    path = path if isinstance(path, Path) else Path(path)
+    if path.is_absolute() or (isinstance(root, str) and root in {"", "."}):
+        return path
+    root = root if isinstance(root, Path) else Path(root)
+
+    return root / path
