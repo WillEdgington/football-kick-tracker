@@ -71,6 +71,7 @@ This section serves as a living development log.
 
 ### Recently Completed
 <!-- Latest first. Maximum 10 items. Older entries belong in the git log. -->
+- `experiment/preannotation-tool-notebooks`: created `notebooks/tools/preannotate_pose_script.ipynb`, `notebooks/tools/preannotate_ball_script.ipynb` notebooks to provide a way to run `tools/preannotate_pose.py`, `tools/preannotate_ball.py` on a non-local kernel (i.e. Colab GPU).
 - `feat/preannotation-CLI-root-arg`: created `resolvePath` (`utils/io.py`) method for resolving a path from a given `root` and `path` input. Refactored `tools/preannotate_pose.py`, `tools/preannotate_ball.py` CLI scripts with addition of `--root` input argument to allow for user to input a custom project root directory rather than the default assumption (`.`).
 - `feat/preannotation-batch-processing`: `getAllVideoPaths` (`utils/video.py`) method for getting video paths from a directory, `batchCVATYOLOPosePreannotation` (`pose/preannotate.py`) method for batch CVAT pose pre-annotation, `batchCVATYOLOBallPreannotation` (`ball/preannotate.py`) method for batch CVAT ball pre-annotation. Refactored `tools/preannotate_pose.py`, `tools/preannotate_ball.py` CLI scripts for batch processing.
 - `feat/cvat-preannotation-tooling`: created methods to convert raw model inference into CVAT compatible XML for ball (`ball/cvat.py`) and pose (`pose/cvat.py`) models with test coverage. Created CLI scripts for the pre-annotation pipeline for ball (`tools/preannotate_ball.py`) and pose (`tools/preannotate_pose.py) YOLO-based models.
@@ -80,7 +81,6 @@ This section serves as a living development log.
 - `docs/update-readme-phases`: old "Project Phase" section of README replaced with new "[Pipeline Components](#pipeline-components)" section. Has a more clear direction as to what needs to be built for each component of the project. Updates to `research.md` to replace phase references and remove commitizen section.
 - `experiment/ball-detection-baseline`: evaluated a fine-tuned `yolo11n` and pre-trained `footandball` model for ball tracking on high quality shooting drill footage. Concluded that the fine-tuned `yolo11n` was the better baseline model.
 - `chore/update-build-system`: Integrated GitHub Actions (CI), automated dependency management via pyproject.toml, and established a Branch & PR development protocol.
-- Update to `research.md` to include Inference Smoothing, ViTPose, RTMPose sections and updated the Ball Tracking section
 
 ---
 
