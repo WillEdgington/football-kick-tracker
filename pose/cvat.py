@@ -26,11 +26,11 @@ def _buildMeta(
     SubElement(skelLabel, "name").text = "person"
     SubElement(skelLabel, "type").text = "skeleton"
 
-    sublabels = SubElement(skelLabel, "sublabels")
     for kpName in keypointIndexes:
-        kplabel = SubElement(sublabels, "label")
+        kplabel = SubElement(labels, "label")
         SubElement(kplabel, "name").text = kpName
         SubElement(kplabel, "type").text = "points"
+        SubElement(kplabel, "parent").text = "person"
 
 
 def toCVATVideoXML(
@@ -63,13 +63,19 @@ def toCVATVideoXML(
                 occluded="0",
                 keyframe="1",
             )
-            SubElement(
-                skel,
-                "box",
-                xtl=f"{x1:.2f}",
-                ytl=f"{y1:.2f}",
-                xbr=f"{x2:.2f}",
-                ybr=f"{y2:.2f}",
+            # Mark track as outside on the very next frame
+            # to prevent CVAT interpolating forward
+            outskel = (
+                SubElement(
+                    track,
+                    "skeleton",
+                    frame=str(frameIdx + 1),
+                    outside="1",
+                    occluded="0",
+                    keyframe="1",
+                )
+                if frameIdx + 1 < totalFrames
+                else None
             )
 
             for kpName in keypointIndexes:
@@ -86,17 +92,16 @@ def toCVATVideoXML(
                     occluded="0" if kconf >= confThreshold else "1",
                     keyframe="1",
                 )
-
-            # Mark track as outside on the very next frame
-            # to prevent CVAT interpolating forward
-            if frameIdx + 1 < totalFrames:
-                SubElement(
-                    track,
-                    "skeleton",
-                    frame=str(frameIdx + 1),
-                    outside="1",
-                    occluded="0",
-                    keyframe="1",
-                )
+                # mark keypoint as outside in next frame
+                if outskel is not None:
+                    SubElement(
+                        outskel,
+                        "points",
+                        label=kpName,
+                        points=f"{kx:.2f},{ky:.2f}",
+                        outside="1",
+                        occluded="0" if kconf >= confThreshold else "1",
+                        keyframe="1",
+                    )
             trackId += 1
     return parseString(tostring(root, encoding="unicode")).toprettyxml(indent="  ")
