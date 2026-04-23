@@ -41,7 +41,9 @@ def toCVATVideoXML(
             continue
         for det in frameData.get("detections", []):
             x1, y1, x2, y2 = det["box"]
-            track = SubElement(root, "track", id=str(trackId), source="auto")
+            track = SubElement(
+                root, "track", id=str(trackId), label="ball", source="auto"
+            )
 
             SubElement(
                 track,
