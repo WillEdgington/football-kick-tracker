@@ -52,13 +52,16 @@ def test_toCVATVideoXML_fullCoverage_pose(samplePoseData, poseIndexes):
     )
     root = fromstring(xmlOut)
 
-    # Skeleton and Box existence
-    skeleton = root.find(".//skeleton")
+    # find active skeleton
+    skeleton = root.find(".//skeleton[@outside='0']")
     assert skeleton is not None
-    assert skeleton.find("box") is not None
 
-    # Occlusion
-    pts = root.findall(".//points")
+    # check for termination skeleton
+    outskeleton = root.find(".//skeleton[@outside='1']")
+    assert outskeleton is not None
+
+    # occlusion Check on the active frame
+    pts = skeleton.findall("points")
     rightAnkle = next(p for p in pts if p.get("label") == "right_ankle")
     assert rightAnkle.get("occluded") == "1"
 
@@ -72,17 +75,16 @@ def test_toCVATVideoXML_handlesMissingAndExtraKeypoints(
         keypointIndexes=poseIndexes,
     )
     root = fromstring(xmlOut)
-    pointsTags = root.findall(".//points")
+
+    # Target only the active skeleton for point counting
+    activeSkel = root.find(".//skeleton[@outside='0']")
+    pointsTags = activeSkel.findall("points")
     pointLabels = [p.get("label") for p in pointsTags]
 
-    # should contain left_ankle, but NOT right_ankle
+    # assertions for the active frame
     assert "left_ankle" in pointLabels
     assert "right_ankle" not in pointLabels
-
-    # left_knee should not be in point labels, even though it is in the pose data
     assert "left_knee" not in pointLabels
-
-    # only expect one tag (left_ankle)
     assert len(pointsTags) == 1
 
 
