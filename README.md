@@ -71,6 +71,7 @@ This section serves as a living development log.
 
 ### Recently Completed
 <!-- Latest first. Maximum 10 items. Older entries belong in the git log. -->
+- `feat/pose-keypoints-cli-arg`: add a `--keypoints` argument to `tools/preannotate_pose.py` CLI script. This argument offers an extra level of flexibility to the script and allows the user to choose which keypoints they wish to be annotated.
 - `fix/cvat-xml-export-fix`: fixes to both `pose/cvat.py` and `ball/cvat.py` modules to fix import errors when importing generated pre-annotation CVAT 1.1 `.xml` files into CVAT.
 - `experiment/preannotation-tool-notebooks`: created `notebooks/tools/preannotate_pose_script.ipynb`, `notebooks/tools/preannotate_ball_script.ipynb` notebooks to provide a way to run `tools/preannotate_pose.py`, `tools/preannotate_ball.py` on a non-local kernel (i.e. Colab GPU).
 - `feat/preannotation-CLI-root-arg`: created `resolvePath` (`utils/io.py`) method for resolving a path from a given `root` and `path` input. Refactored `tools/preannotate_pose.py`, `tools/preannotate_ball.py` CLI scripts with addition of `--root` input argument to allow for user to input a custom project root directory rather than the default assumption (`.`).
@@ -80,7 +81,6 @@ This section serves as a living development log.
 - `feat/raw-inference-pipeline`: renamed test scripts from test_{module}.py to test_{library}_{module}.py to avoid collision errors. expanded pose constants to include more COCO keypoints (face, upper, all, body). Created YOLO compatible raw video inference methods for pose and ball models (this included the creation of `ball/inference.py`). Full test coverage for new methods.
 - `chore/docs-restructuring`: `/docs` directory created for any secondary documentation, `research.md` renamed to `RESEARCH.md` and relocated to inside `docs/`. Checked for any internal links that may be affected from restructure, found None.
 - `docs/update-readme-phases`: old "Project Phase" section of README replaced with new "[Pipeline Components](#pipeline-components)" section. Has a more clear direction as to what needs to be built for each component of the project. Updates to `research.md` to replace phase references and remove commitizen section.
-- `experiment/ball-detection-baseline`: evaluated a fine-tuned `yolo11n` and pre-trained `footandball` model for ball tracking on high quality shooting drill footage. Concluded that the fine-tuned `yolo11n` was the better baseline model.
 
 ---
 
