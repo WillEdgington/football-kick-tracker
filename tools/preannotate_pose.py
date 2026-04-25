@@ -1,13 +1,39 @@
 import argparse
 from pathlib import Path
+from typing import Dict
 
 from pose.config import BESTPOSEMODELPATH, CVATEXPORTSPOSEDIR
-from pose.constants import BODYKEYPOINTS
+from pose.constants import (
+    ALLKEYPOINTS,
+    BODYKEYPOINTS,
+    FACEKEYPOINTS,
+    LOWERKEYPOINTS,
+    UPPERKEYPOINTS,
+)
 from pose.preannotate import batchCVATYOLOPosePreannotation
 from utils.config import RAWTRAININGVIDEOSDIR
 from utils.io import resolvePath
 from utils.video import getAllVideoPaths
 from utils.yolo import loadYOLOModel
+
+
+def chooseKeypoints(arg: str) -> Dict[str, int]:
+    match arg:
+        case "face":
+            return FACEKEYPOINTS
+        case "upper":
+            return UPPERKEYPOINTS
+        case "lower":
+            return LOWERKEYPOINTS
+        case "body":
+            return BODYKEYPOINTS
+        case "all":
+            return ALLKEYPOINTS
+        case _:
+            raise ValueError(
+                "invalid --keypoints argument.\nAllowed values for --keypoints args:"
+                '\n  "face"\n  "upper"\n  "lower"\n  "body"\n  "all"'
+            )
 
 
 def main():
@@ -41,6 +67,12 @@ def main():
         action="store_true",
         help="Overwrite XML files of same name",
     )
+    parser.add_argument(
+        "--keypoints",
+        type=str,
+        default="body",
+        help="COCO keypoints to annotate",
+    )
     args = parser.parse_args()
 
     root = Path(args.root)
@@ -48,6 +80,7 @@ def main():
     modelPath = resolvePath(root, args.model)
     outputDir = resolvePath(root, args.output_dir)
     overwrite = args.overwrite
+    keypointIndexes = chooseKeypoints(arg=args.keypoints)
 
     if videoPath.is_dir():
         videoFiles = getAllVideoPaths(
@@ -64,7 +97,7 @@ def main():
         model=model,
         videoPaths=videoFiles,
         outputDir=outputDir,
-        keypointIndexes=BODYKEYPOINTS,
+        keypointIndexes=keypointIndexes,
         overwrite=overwrite,
     )
 
